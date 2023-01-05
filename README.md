@@ -1,4 +1,4 @@
-# serverless-cloudformation-changesets
+# serverless-cloudformation-changesets-v3
 [![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
 
 
@@ -12,14 +12,14 @@ Serverless framework plugin to create CloudFormation ChangeSets. Originally [for
 Install the plugin from npm
 
 ```bash
-$ npm install --save serverless-cloudformation-changesets
+$ npm install --save serverless-cloudformation-changesets-v3
 ```
 
 Add the plugin to your `serverless.yml` file:
 
 ```yaml
 plugins:
-  - serverless-cloudformation-changesets
+  - serverless-cloudformation-changesets-v3
 ```
 
 ## Usage
