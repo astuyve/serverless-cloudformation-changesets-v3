@@ -1,24 +1,37 @@
 'use strict'
 
-const _ = require('lodash')
 const createChangeSet = require('./lib/createChangeSet')
-const setBucketName = require('serverless/lib/plugins/aws/lib/setBucketName')
+const setBucketName = require('serverless/lib/plugins/aws/lib/set-bucket-name')
+
+const changeSetPair = (params) => {
+  if (!params) {
+    return
+  }
+  // TODO: refactor to use optional chaining when node12 support is dropped
+  const paramPair = params.filter((param) => param.startsWith('changeset') )[0]
+  if (!paramPair) {
+    return
+  }
+  const [requireChangeSet, changeSetName] = paramPair.split('=')
+
+  return {
+    requireChangeSet: !!requireChangeSet,
+    changeSetName
+  }
+}
 
 class ServerlessCloudFormationChangeSets {
   constructor (serverless, options) {
     this.serverless = serverless
-    this.options = _.merge(
-      {},
-      _.omit(options, ['changeset']),
-      _.get(serverless.service, 'custom.cf-changesets') || {}
-    )
+    // TODO: refactor to use optional chaining when node12 support is dropped
+    this.options = Object.assign({}, serverless.service && serverless.service.custom && serverless.service.custom['cf-changesets'], options)
     this.provider = this.serverless.getProvider('aws')
 
-    if (options.changeset) {
-      this.options.requireChangeSet = true
-      if (typeof options.changeset === 'string') {
-        this.options.changeSetName = options.changeset
-      }
+
+    if (options.param) {
+      const { requireChangeSet, changeSetName } = changeSetPair(options.param)
+      this.options.requireChangeSet = requireChangeSet
+      this.options.changeSetName = changeSetName
     }
 
     if (this.options.requireChangeSet) {

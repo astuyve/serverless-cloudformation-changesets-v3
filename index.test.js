@@ -1,12 +1,12 @@
 'use strict'
 
 const _ = require('lodash')
-const AwsProvider = require('serverless/lib/plugins/aws/provider/awsProvider')
+const AwsProvider = require('serverless/lib/plugins/aws/provider')
 const createChangeSet = require('./lib/createChangeSet')
 const expect = require('chai').expect
 const Serverless = require('serverless/lib/Serverless')
 const ServerlessCloudFormationChangeSets = require('./index')
-const setBucketName = require('serverless/lib/plugins/aws/lib/setBucketName')
+const setBucketName = require('serverless/lib/plugins/aws/lib/set-bucket-name')
 const sinon = require('sinon')
 
 describe('ServerlessCloudFormationChangeSets', () => {
@@ -15,12 +15,12 @@ describe('ServerlessCloudFormationChangeSets', () => {
   let options
 
   beforeEach(() => {
-    serverless = new Serverless()
     options = {
       stage: 'dev',
       region: 'us-east-1',
-      changeset: 'test'
+      param: ['changeset=test']
     }
+    serverless = new Serverless({commands: [], options})
     serverless.setProvider('aws', new AwsProvider(serverless))
     serverlessChangeSets = new ServerlessCloudFormationChangeSets(serverless, options)
     serverlessChangeSets.serverless.service.provider.shouldNotDeploy = false
@@ -35,6 +35,7 @@ describe('ServerlessCloudFormationChangeSets', () => {
       expect(serverlessChangeSets.options).to.deep.equal({
         stage: 'dev',
         region: 'us-east-1',
+        param: ['changeset=test'],
         requireChangeSet: true,
         changeSetName: 'test'
       })
@@ -61,13 +62,14 @@ describe('ServerlessCloudFormationChangeSets', () => {
       const serverlessChangeSets = new ServerlessCloudFormationChangeSets(serverless, {
         stage: 'dev',
         region: 'us-east-1',
-        changeset: true
+        param: ['changeset=whatever']
       })
       expect(serverlessChangeSets.options).to.deep.equal({
         stage: 'dev',
         region: 'us-east-1',
+        param: ['changeset=whatever'],
         requireChangeSet: true,
-        changeSetName: 'test'
+        changeSetName: 'whatever'
       })
     })
 
@@ -76,11 +78,12 @@ describe('ServerlessCloudFormationChangeSets', () => {
       const serverlessChangeSets = new ServerlessCloudFormationChangeSets(serverless, {
         stage: 'dev',
         region: 'us-east-1',
-        changeset: 'whatever'
+        param: ['changeset=whatever']
       })
       expect(serverlessChangeSets.options).to.deep.equal({
         stage: 'dev',
         region: 'us-east-1',
+        param: ['changeset=whatever'],
         requireChangeSet: true,
         changeSetName: 'whatever'
       })
