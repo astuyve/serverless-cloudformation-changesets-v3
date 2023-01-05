@@ -28,7 +28,7 @@
   ],
   "license": "MIT",
   "main": "index.js",
-  "name": "serverless-cloudformation-changesets",
+  "name": "serverless-cloudformation-changesets-v3",
   "repository": {
     "type": "git",
     "url": "https://github.com/astuyve/serverless-cloudformation-changesets-v3"
